@@ -53,9 +53,47 @@ class rushhour(StateSpace):
         '''Return list of rushhour objects that are the successors of the current object'''
 
         successors = []
-        States = list()
 
-        # for car in self.vehicles:
+        for car in self.vehicles:
+          if self.check_collision_forward(car):
+            curr = car
+            new = self.move_forward(curr)
+            new_vehicles = copy.deepcopy(self.vehicles)
+
+            for i in range(len(new_vehicles)):
+              if new_vehicles[i].iden == curr.iden:
+                new_vehicles[i] = new
+
+            if car.is_horizontal:
+              action = "move_vehicle(" + new.iden + ", W)"
+            else:
+              action = "move_vehicle(" + new.iden + ", N)"
+            # print(self.gval)
+
+            successors.append(rushhour(action, self.gval+1, new_vehicles, 
+                          self.goal_loc, self.goal_orient, self.board_size, self))
+          
+
+          if self.check_collision_backward(car):
+            curr = car
+            new = self.move_backward(curr)
+            new_vehicles = copy.deepcopy(self.vehicles)
+
+            for i in range(len(new_vehicles)):
+              if new_vehicles[i].iden == curr.iden:
+                new_vehicles[i] = new
+
+            if car.is_horizontal:
+              action = "move_vehicle(" + new.iden + ", E)"
+            else:
+              action = "move_vehicle(" + new.iden + ", S)"
+            # print(self.gval)
+
+            successors.append(rushhour(action, self.gval+1, new_vehicles, 
+                          self.goal_loc, self.goal_orient, self.board_size, self))
+          
+
+        return successors
 
 
           # if curr.
@@ -105,7 +143,6 @@ class rushhour(StateSpace):
       spaces = []
       for car in cars:
         temp = self.taken_spaces(car)
-        print(temp)
         for i in temp:
           if i in spaces:
             return False
@@ -145,11 +182,11 @@ class rushhour(StateSpace):
       # print(new_vehicle.x, new_vehicle.y)
 
       if vehicle.is_horizontal:
-        new_vehicle.x = new_vehicle.x + 1
-        new_vehicle.loc = (new_vehicle.loc[0]+1, new_vehicle.loc[1])
+        new_vehicle.x = new_vehicle.x - 1
+        new_vehicle.loc = (new_vehicle.loc[0]-1, new_vehicle.loc[1])
       else:
         new_vehicle.y = new_vehicle.y + 1
-        new_vehicle.loc = (new_vehicle.loc[0], new_vehicle.loc[1]+1)
+        new_vehicle.loc = (new_vehicle.loc[0], new_vehicle.loc[1] + 1)
 
 
       return new_vehicle
@@ -159,8 +196,8 @@ class rushhour(StateSpace):
       new_vehicle = copy.deepcopy(vehicle)
 
       if vehicle.is_horizontal:
-        new_vehicle.x = new_vehicle.x - 1
-        new_vehicle.loc = (new_vehicle.loc[0]-1, new_vehicle.loc[1])
+        new_vehicle.x = new_vehicle.x + 1
+        new_vehicle.loc = (new_vehicle.loc[0] + 1, new_vehicle.loc[1])
       else:
         new_vehicle.y = new_vehicle.y - 1
         new_vehicle.loc = (new_vehicle.loc[0], new_vehicle.loc[1]-1)
@@ -406,7 +443,7 @@ def test(nvehicles, board_size):
     final = se.search(s0, rushhour_goal_fn, heur_min_moves)
 
 if __name__ == '__main__':
-    s = make_init_state((7, 7), [['gv', (5, 4), 2, True, True],
+    s = make_init_state((7, 7), [['gv', (2, 4), 2, True, True],
               ['1', (3, 1), 2, False, False],
               ['3', (4, 4), 2, False, False]], (4, 1), 'E')
 #     print(s.vehicles,
@@ -416,4 +453,8 @@ if __name__ == '__main__':
 # )
 #     for v in s.vehicles:
 #       print(v.iden)
-    print(s.check_collision_backward(s.vehicles[0])) 
+    # print(s.check_collision_forward(s.vehicles[0])) 
+    test = s.successors()
+    for s in test:
+      for car in s.vehicles:
+        print(car.iden, car.loc)
