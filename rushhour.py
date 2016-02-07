@@ -11,6 +11,7 @@ rushhour STATESPACE
 
 from search import *
 from random import randint
+import copy
 
 ##################################################
 # The search space class 'rushhour'             #
@@ -89,18 +90,17 @@ class rushhour(StateSpace):
         else:
           return True
 
-    def check_collision(self, *args):
+    def check_collision(self, args=0):
       # check for collisions given all cars
-      # 
-      if args:
+      # check for changes in forward/backward
+      if args != 0:
         cars = []
         for arg in args:
           cars.append(arg)
-        print(cars)
       else:
         cars = self.vehicles
-        print(cars)
 
+      # normal iteration
 
       spaces = []
       for car in cars:
@@ -114,19 +114,59 @@ class rushhour(StateSpace):
 
       return True
 
-    def check_collision_forward(self):
-      # check for collisions given all cars
-      spaces = []
+    def check_collision_forward(self, vehicle):
+      # check for collisions given all cars forward
+      testing = [ ]
       for car in self.vehicles:
-        temp = self.taken_spaces(car)
-        print(temp)
-        for i in temp:
-          if i in spaces:
-            return False
-          else:
-            spaces.append(i)
+        if car.iden == vehicle.iden:
+          testing.append(self.move_forward(vehicle))
+        else:
+          testing.append(car)
 
-      return True
+      return self.check_collision(testing)
+
+    def check_collision_backward(self, vehicle):
+      # check for collisions given all cars backward
+      testing = [ ]
+      for car in self.vehicles:
+        if car.iden == vehicle.iden:
+          testing.append(self.move_backward(vehicle))
+        else:
+          testing.append(car)
+
+      return self.check_collision(testing)
+
+    def move_forward(self, vehicle):
+
+      # copy vehicle structure
+      new_vehicle = copy.deepcopy(vehicle)
+      # for testing
+      # print(new_vehicle.loc)
+      # print(new_vehicle.x, new_vehicle.y)
+
+      if vehicle.is_horizontal:
+        new_vehicle.x = new_vehicle.x + 1
+        new_vehicle.loc = (new_vehicle.loc[0]+1, new_vehicle.loc[1])
+      else:
+        new_vehicle.y = new_vehicle.y + 1
+        new_vehicle.loc = (new_vehicle.loc[0], new_vehicle.loc[1]+1)
+
+
+      return new_vehicle
+
+    def move_backward(self, vehicle):
+
+      new_vehicle = copy.deepcopy(vehicle)
+
+      if vehicle.is_horizontal:
+        new_vehicle.x = new_vehicle.x - 1
+        new_vehicle.loc = (new_vehicle.loc[0]-1, new_vehicle.loc[1])
+      else:
+        new_vehicle.y = new_vehicle.y - 1
+        new_vehicle.loc = (new_vehicle.loc[0], new_vehicle.loc[1]-1)
+
+      return new_vehicle
+
 
     def taken_spaces(self, vehicle):
       # to return list of tuples representing taken vehicles
@@ -366,7 +406,7 @@ def test(nvehicles, board_size):
     final = se.search(s0, rushhour_goal_fn, heur_min_moves)
 
 if __name__ == '__main__':
-    s = make_init_state((7, 7), [['gv', (3, 3), 2, False, True],
+    s = make_init_state((7, 7), [['gv', (5, 4), 2, True, True],
               ['1', (3, 1), 2, False, False],
               ['3', (4, 4), 2, False, False]], (4, 1), 'E')
 #     print(s.vehicles,
@@ -376,4 +416,4 @@ if __name__ == '__main__':
 # )
 #     for v in s.vehicles:
 #       print(v.iden)
-    print(s.check_collision()) 
+    print(s.check_collision_backward(s.vehicles[0])) 
