@@ -16,12 +16,37 @@ from random import randint
 # The search space class 'rushhour'             #
 # This class is a sub-class of 'StateSpace'      #
 ##################################################
+class Car:
+  def __init__(self, iden, loc, is_horizonal, length, is_goal, board_size):
+    # board dim and loc are tuples
+    self.iden = iden
+    self.loc = loc
+    self.start_x = loc[0]
+    self.start_y = loc[1]
+    self.is_horizonal = is_horizonal
+    self.length = length
+    self.is_goal = is_goal
+    self.board_size = board_size
+    self.board_width = board_size[0]
+    self.board_height = board_size[1]
+
+    if self.is_horizonal:
+      self.end_x = self.start_x + self.length
+      self.end_y = self.start_y
+    else:
+      self.end_x = self.start_x
+      self.end_y = self.start_y + self.length
+
+
 
 
 class rushhour(StateSpace):
-    def __init__(self, action, gval, ... )
-#IMPLEMENT
-        """Initialize a rushhour search state object."""
+    def __init__(self, action, gval, vehicles, goal_loc, goal_orient, board_size, parent = None ):
+      StateSpace.__init__(self, action, gval, parent)
+      self.vehicles = vehicles
+      self.goal_loc = goal_loc
+
+
 
     def successors(self):
 #IMPLEMENT
