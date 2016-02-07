@@ -224,7 +224,11 @@ class rushhour(StateSpace):
     def hashable_state(self):
 #IMPLEMENT
         '''Return a data item that can be used as a dictionary key to UNIQUELY represent the state.'''
-        return
+        string = self.goal_loc, ";", self.goal_orient, ";", self.board_size[0], ";", self.board_size[1], ";"
+        for car in self.vehicles:
+            string += car.iden, ";", car.x, ";", car.y, ";", car.length, ";", car.is_horizontal, ";", car.is_goal, ";"
+        return string
+
     def print_state(self):
         #DO NOT CHANGE THIS FUNCTION---it will be used in auto marking
         #and in generating sample trace output.
@@ -261,7 +265,12 @@ class rushhour(StateSpace):
                  <length> is the length of that vehicle
                  <is_horizontal> is true iff the vehicle is oriented horizontally
                  <is_goal> is true iff the vehicle is a goal vehicle
+
         '''
+        status_list = []
+        for car in self.vehicles:
+            status_list.append([car.iden, (car.x, car.y), car.length, car.is_horizontal, car.is_goal])
+        return status_list
 
     def get_board_properties(self):
 #IMPLEMENT
@@ -271,6 +280,7 @@ class rushhour(StateSpace):
                  goal_direction is one of 'N', 'E', 'S' or 'W' indicating
                                 the orientation of the goal
         '''
+        return(self.board_size, self.goal_loc, self.goal_orient)
 
 #############################################
 # heuristics                                #
@@ -299,11 +309,41 @@ def heur_min_moves(state):
     #Our heuristic value is the minimum of MOVES1 and MOVES2 over all goal vehicles.
     #You should implement this heuristic function exactly, even if it is
     #tempting to improve it.
+    # self.goal_loc = goal_loc
+    #   self.goal_orient = goal_orient
+    #   self.board_size = board_size
+
+    minimum_moves = max(state.goal_loc[0], state.goal_loc[1])
+    for vehicle in state.vehicles:
+        if vehicle.is_goal:
+            #check if it is oriented correctly
+            if state.goal_orient is 'N' and not vehicle.is_horizontal:
+                if state.goal_loc[0] is vehicle.x: #Same column
+                    moves1 = abs(vehicle.y - state.goal_loc[1])
+                    moves2 = state.board_size[1] - moves1
+                    minimum_moves = min(minimum_moves, moves1, moves2)
+            elif state.goal_orient is 'S' and not vehicle.is_horizontal:
+                if state.goal_loc[0] is vehicle.x: #Same column
+                    moves1 = abs((vehicle.y + vehicle.length - 1) % state.board_size[0] - state.goal_loc[1])
+                    moves2 = state.board_size[1] - moves1
+                    minimum_moves = min(minimum_moves, moves1, moves2)
+            elif state.goal_orient is 'W' and vehicle.is_horizontal:
+                if state.goal_loc[1] is vehicle.y: #Same row
+                    moves1 = abs(vehicle.x - state.goal_entrance[0])
+                    moves2 = state.board_size[0] - moves1
+                    minimum_moves = min(minimum_moves, moves1, moves2)
+            elif state.goal_orient is 'E' and vehicle.is_horizontal:
+                if state.goal_loc[1] is vehicle.y: #Same row
+                    moves1 = abs((vehicle.x + vehicle.length - 1) % state.board_size[1] - state.goal_loc[0])
+                    moves2 = state.board_size[0] - moves1
+                    minimum_moves = min(minimum_moves, moves1, moves2)
+    return minimum_moves
 
 
 def rushhour_goal_fn(state):
 #IMPLEMENT
     '''Have we reached a goal state'''
+    return not heur_min_moves(state)
 
 
 def make_init_state(board_size, vehicle_list, goal_entrance, goal_direction):
@@ -447,7 +487,7 @@ def test(nvehicles, board_size):
     final = se.search(s0, rushhour_goal_fn, heur_min_moves)
 
 if __name__ == '__main__':
-    s = make_init_state((7, 7), [['gv', (1, 4), 2, True, True],
+    s = make_init_state((7, 7), [['gv', (1, 1), 2, True, True],
               ['1', (3, 1), 2, False, False],
               ['3', (4, 4), 2, False, False]], (4, 1), 'E')
 #     print(s.vehicles,
@@ -458,7 +498,4 @@ if __name__ == '__main__':
 #     for v in s.vehicles:
 #       print(v.iden)
     # print(s.check_collision_forward(s.vehicles[0])) 
-    test = s.successors()
-    for s in test:
-      for car in s.vehicles:
-        print(car.iden, car.loc, (car.end_x, car.end_y))
+ 
