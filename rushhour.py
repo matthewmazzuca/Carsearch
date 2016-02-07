@@ -75,7 +75,7 @@ class rushhour(StateSpace):
           return True
 
 
-    def check_forward(self):
+    def check_forward(self, vehicle):
 
       if vehicle.is_horizontal:
         if vehicle.x == 0:
@@ -88,6 +88,17 @@ class rushhour(StateSpace):
         else:
           return True
 
+    def check_colission(self):
+      spaces = []
+      for car in self.vehicle:
+        temp = taken_spaces(car)
+        for i in temp:
+          if i is in spaces:
+            return False
+          else:
+            spaces.append(i)
+
+      return True
 
     def taken_spaces(self, vehicle):
       # to return list of tuples representing taken vehicles
