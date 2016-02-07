@@ -1,5 +1,5 @@
 #import student's function
-from rushhour import *
+from rushhour_2 import *
 
 passingMark = 7
 
