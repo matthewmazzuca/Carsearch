@@ -21,8 +21,8 @@ class Car:
     # board dim and loc are tuples
     self.iden = iden
     self.loc = loc
-    self.start_x = loc[0]
-    self.start_y = loc[1]
+    self.x = self.loc[0]
+    self.y = self.loc[1]
     self.is_horizontal = is_horizontal
     self.length = length
     self.is_goal = is_goal
@@ -31,11 +31,11 @@ class Car:
     self.board_height = board_size[1]
 
     if self.is_horizontal:
-      self.end_x = self.start_x + self.length
-      self.end_y = self.start_y
+      self.end_x = self.x + self.length
+      self.end_y = self.y
     else:
-      self.end_x = self.start_x
-      self.end_y = self.start_y + self.length
+      self.end_x = self.x
+      self.end_y = self.y + self.length
 
 class rushhour(StateSpace):
     def __init__(self, action, gval, vehicles, goal_loc, goal_orient, board_size, parent = None ):
@@ -77,17 +77,27 @@ class rushhour(StateSpace):
 
     def check_forward(self):
 
-      return
+      if vehicle.is_horizontal:
+        if vehicle.x == 0:
+          return False
+        else:
+          return True
+      else:
+        if vehicle.y == 0:
+          return False
+        else:
+          return True
+
 
     def taken_spaces(self, vehicle):
       # to return list of tuples representing taken vehicles
       ret_list = []
       if vehicle.is_horizontal:
         for i in range(vehicle.length):
-          ret_list.append((vehicle.start_x + i, vehicle.start_y))
+          ret_list.append((vehicle.x + i, vehicle.y))
       else:
         for i in range(vehicle.length):
-          ret_list.append((vehicle.start_x, vehicle.start_y + i))
+          ret_list.append((vehicle.x, vehicle.y + i))
 
       return ret_list
 
