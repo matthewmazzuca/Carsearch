@@ -32,11 +32,11 @@ class Car:
     self.board_height = board_size[1]
 
     if self.is_horizontal:
-      self.end_x = self.x + self.length
+      self.end_x = self.x + (self.length-1)
       self.end_y = self.y
     else:
       self.end_x = self.x
-      self.end_y = self.y + self.length
+      self.end_y = self.y + self.length-1
 
 class rushhour(StateSpace):
     def __init__(self, action, gval, vehicles, goal_loc, goal_orient, board_size, parent = None ):
@@ -184,9 +184,11 @@ class rushhour(StateSpace):
       if vehicle.is_horizontal:
         new_vehicle.x = new_vehicle.x - 1
         new_vehicle.loc = (new_vehicle.loc[0]-1, new_vehicle.loc[1])
+        new_vehicle.end_x = new_vehicle.end_x - 1
       else:
         new_vehicle.y = new_vehicle.y + 1
         new_vehicle.loc = (new_vehicle.loc[0], new_vehicle.loc[1] + 1)
+        new_vehicle.end_y = new_vehicle.end_y + 1
 
 
       return new_vehicle
@@ -198,9 +200,11 @@ class rushhour(StateSpace):
       if vehicle.is_horizontal:
         new_vehicle.x = new_vehicle.x + 1
         new_vehicle.loc = (new_vehicle.loc[0] + 1, new_vehicle.loc[1])
+        new_vehicle.end_x = new_vehicle.end_x + 1
       else:
         new_vehicle.y = new_vehicle.y - 1
         new_vehicle.loc = (new_vehicle.loc[0], new_vehicle.loc[1]-1)
+        new_vehicle.end_y = new_vehicle.end_y - 1
 
       return new_vehicle
 
@@ -443,7 +447,7 @@ def test(nvehicles, board_size):
     final = se.search(s0, rushhour_goal_fn, heur_min_moves)
 
 if __name__ == '__main__':
-    s = make_init_state((7, 7), [['gv', (2, 4), 2, True, True],
+    s = make_init_state((7, 7), [['gv', (1, 4), 2, True, True],
               ['1', (3, 1), 2, False, False],
               ['3', (4, 4), 2, False, False]], (4, 1), 'E')
 #     print(s.vehicles,
@@ -457,4 +461,4 @@ if __name__ == '__main__':
     test = s.successors()
     for s in test:
       for car in s.vehicles:
-        print(car.iden, car.loc)
+        print(car.iden, car.loc, (car.end_x, car.end_y))
