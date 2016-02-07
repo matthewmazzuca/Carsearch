@@ -486,10 +486,16 @@ def test(nvehicles, board_size):
     #se.trace_on(2)
     final = se.search(s0, rushhour_goal_fn, heur_min_moves)
 
-if __name__ == '__main__':
-    s = make_init_state((7, 7), [['gv', (1, 1), 2, True, True],
-              ['1', (3, 1), 2, False, False],
-              ['3', (4, 4), 2, False, False]], (4, 1), 'E')
+def case_test(init_state, method = None):
+    if method is None:
+        method = 'astar'
+    se = SearchEngine(method, 'full')
+    se.trace_on(1)
+    final = se.search(init_state, rushhour_goal_fn, heur_min_moves)
+# if __name__ == '__main__':
+#     s = make_init_state((7, 7), [['gv', (1, 1), 2, True, True],
+#               ['1', (3, 1), 2, False, False],
+#               ['3', (4, 4), 2, False, False]], (4, 1), 'E')
 #     print(s.vehicles,
 #       s.goal_loc,
 #       s.goal_orient,
