@@ -54,9 +54,9 @@ class rushhour(StateSpace):
         successors = []
         States = list()
 
-        for i in range(len(self.vehicles)):
+        # for car in self.vehicles:
 
-          curr = self.vehicles[i]
+
           # if curr.
 
 
@@ -76,6 +76,7 @@ class rushhour(StateSpace):
 
 
     def check_forward(self, vehicle):
+      # check if vehicle will hit wall going forward
 
       if vehicle.is_horizontal:
         if vehicle.x == 0:
@@ -88,12 +89,39 @@ class rushhour(StateSpace):
         else:
           return True
 
-    def check_colission(self):
+    def check_collision(self, *args):
+      # check for collisions given all cars
+      # 
+      if args:
+        cars = []
+        for arg in args:
+          cars.append(arg)
+        print(cars)
+      else:
+        cars = self.vehicles
+        print(cars)
+
+
       spaces = []
-      for car in self.vehicle:
-        temp = taken_spaces(car)
+      for car in cars:
+        temp = self.taken_spaces(car)
+        print(temp)
         for i in temp:
-          if i is in spaces:
+          if i in spaces:
+            return False
+          else:
+            spaces.append(i)
+
+      return True
+
+    def check_collision_forward(self):
+      # check for collisions given all cars
+      spaces = []
+      for car in self.vehicles:
+        temp = self.taken_spaces(car)
+        print(temp)
+        for i in temp:
+          if i in spaces:
             return False
           else:
             spaces.append(i)
@@ -338,7 +366,7 @@ def test(nvehicles, board_size):
     final = se.search(s0, rushhour_goal_fn, heur_min_moves)
 
 if __name__ == '__main__':
-    s = make_init_state((7, 7), [['gv', (1, 1), 2, True, True],
+    s = make_init_state((7, 7), [['gv', (3, 3), 2, False, True],
               ['1', (3, 1), 2, False, False],
               ['3', (4, 4), 2, False, False]], (4, 1), 'E')
 #     print(s.vehicles,
@@ -348,6 +376,4 @@ if __name__ == '__main__':
 # )
 #     for v in s.vehicles:
 #       print(v.iden)
-    print(s.check_back(s.vehicles[0]))
-    s.taken_spaces(s.vehicles[1])
-    s.taken_spaces(s.vehicles[2])
+    print(s.check_collision()) 
