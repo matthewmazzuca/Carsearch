@@ -309,12 +309,12 @@ def heur_min_moves(state):
     #directions that lead to the goal.
     #NOTE that we want an estimate of the number of ADDITIONAL
     #     moves required from our current state
-    #1. Proceeding in the first direction, let MOVES1 =
+    #1. Proceeding in the first direction, let m1 =
     #   number of moves required to get to the goal if it were unobstructed
-    #2. Proceeding in the second direction, let MOVES2 =
+    #2. Proceeding in the second direction, let m2 =
     #   number of moves required to get to the goal if it were unobstructed
     #
-    #Our heuristic value is the minimum of MOVES1 and MOVES2 over all goal vehicles.
+    #Our heuristic value is the minimum of m1 and m2 over all goal vehicles.
     #You should implement this heuristic function exactly, even if it is
     #tempting to improve it.
     # self.goal_loc = goal_loc
@@ -329,30 +329,30 @@ def heur_min_moves(state):
             if state.goal_orient is 'N' and not vehicle.is_horizontal:
 
                 if state.goal_loc[0] is vehicle.x: #Same column
-                    moves1 = abs(vehicle.y - state.goal_loc[1])
-                    moves2 = state.board_size[1] - moves1
-                    min_moves = min(min_moves, moves1, moves2)
+                    m1 = abs(vehicle.y - state.goal_loc[1])
+                    m2 = state.board_size[1] - m1
+                    min_moves = min(min_moves, m1, m2)
 
             elif state.goal_orient is 'S' and not vehicle.is_horizontal:
 
                 if state.goal_loc[0] is vehicle.x: #Same column
-                    moves1 = abs((vehicle.y + vehicle.length - 1) % state.board_size[0] - state.goal_loc[1])
-                    moves2 = state.board_size[1] - moves1
-                    min_moves = min(min_moves, moves1, moves2)
+                    m1 = abs((vehicle.y + vehicle.length - 1) % state.board_size[0] - state.goal_loc[1])
+                    m2 = state.board_size[1] - m1
+                    min_moves = min(min_moves, m1, m2)
 
             elif state.goal_orient is 'W' and vehicle.is_horizontal:
 
                 if state.goal_loc[1] is vehicle.y: #Same row
-                    moves1 = abs(vehicle.x - state.goal_entrance[0])
-                    moves2 = state.board_size[0] - moves1
-                    min_moves = min(min_moves, moves1, moves2)
+                    m1 = abs(vehicle.x - state.goal_entrance[0])
+                    m2 = state.board_size[0] - m1
+                    min_moves = min(min_moves, m1, m2)
 
             elif state.goal_orient is 'E' and vehicle.is_horizontal:
 
                 if state.goal_loc[1] is vehicle.y: #Same row
-                    moves1 = abs((vehicle.x + vehicle.length - 1) % state.board_size[1] - state.goal_loc[0])
-                    moves2 = state.board_size[0] - moves1
-                    min_moves = min(min_moves, moves1, moves2)
+                    m1 = abs((vehicle.x + vehicle.length - 1) % state.board_size[1] - state.goal_loc[0])
+                    m2 = state.board_size[0] - m1
+                    min_moves = min(min_moves, m1, m2)
 
     return min_moves
 
