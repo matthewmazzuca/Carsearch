@@ -1,5 +1,5 @@
 #import student's function
-from rushhour_2 import *
+from rushhour import *
 
 passingMark = 7
 
@@ -294,3 +294,19 @@ if __name__ == '__main__':
         print("All tests passed. Good job!")
     else:
         print("Some errors were found. Go back and check the output.")
+
+
+
+    # vehicle_list = []
+    # vehicle_list.append(['gv', (1,2), 2, True, True])
+    # vehicle_list.append(['1', (0,0), 2, True, False])
+    # vehicle_list.append(['2', (0,1), 3, False, False])
+    # vehicle_list.append(['3', (3,1), 3, False, False])
+    # vehicle_list.append(['4', (5,1), 3, False, False])
+    # vehicle_list.append(['5', (4,4), 2, True, False])
+    # vehicle_list.append(['6', (0,4), 2, False, False])
+    # vehicle_list.append(['7', (2,5), 3, True, False])
+    # case1 = make_init_state((6,6),vehicle_list,(5,2),'E')
+    # # case1.print_state()
+    # case_test(case1)
+    test(200, (100,100))
