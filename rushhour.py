@@ -224,7 +224,7 @@ class rushhour(StateSpace):
     def hashable_state(self):
 #IMPLEMENT
         '''Return a data item that can be used as a dictionary key to UNIQUELY represent the state.'''
-        
+
         string = "\n" + "\n"  + "=========New State=========" + "\n" + \
                 "- - - - - - -Global Parameters - - - - - - -" + "\n" \
                 "goal location: " + str(self.goal_loc) + ";"+ "\n" + \
@@ -321,31 +321,40 @@ def heur_min_moves(state):
     #   self.goal_orient = goal_orient
     #   self.board_size = board_size
 
-    minimum_moves = max(state.goal_loc[0], state.goal_loc[1])
+    min_moves = max(state.goal_loc[0], state.goal_loc[1])
+
     for vehicle in state.vehicles:
         if vehicle.is_goal:
             #check if it is oriented correctly
             if state.goal_orient is 'N' and not vehicle.is_horizontal:
+
                 if state.goal_loc[0] is vehicle.x: #Same column
                     moves1 = abs(vehicle.y - state.goal_loc[1])
                     moves2 = state.board_size[1] - moves1
-                    minimum_moves = min(minimum_moves, moves1, moves2)
+                    min_moves = min(min_moves, moves1, moves2)
+
             elif state.goal_orient is 'S' and not vehicle.is_horizontal:
+
                 if state.goal_loc[0] is vehicle.x: #Same column
                     moves1 = abs((vehicle.y + vehicle.length - 1) % state.board_size[0] - state.goal_loc[1])
                     moves2 = state.board_size[1] - moves1
-                    minimum_moves = min(minimum_moves, moves1, moves2)
+                    min_moves = min(min_moves, moves1, moves2)
+
             elif state.goal_orient is 'W' and vehicle.is_horizontal:
+
                 if state.goal_loc[1] is vehicle.y: #Same row
                     moves1 = abs(vehicle.x - state.goal_entrance[0])
                     moves2 = state.board_size[0] - moves1
-                    minimum_moves = min(minimum_moves, moves1, moves2)
+                    min_moves = min(min_moves, moves1, moves2)
+
             elif state.goal_orient is 'E' and vehicle.is_horizontal:
+
                 if state.goal_loc[1] is vehicle.y: #Same row
                     moves1 = abs((vehicle.x + vehicle.length - 1) % state.board_size[1] - state.goal_loc[0])
                     moves2 = state.board_size[0] - moves1
-                    minimum_moves = min(minimum_moves, moves1, moves2)
-    return minimum_moves
+                    min_moves = min(min_moves, moves1, moves2)
+
+    return min_moves
 
 
 def rushhour_goal_fn(state):
