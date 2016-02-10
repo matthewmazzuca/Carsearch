@@ -224,9 +224,17 @@ class rushhour(StateSpace):
     def hashable_state(self):
 #IMPLEMENT
         '''Return a data item that can be used as a dictionary key to UNIQUELY represent the state.'''
-        string = self.goal_loc, ";", self.goal_orient, ";", self.board_size[0], ";", self.board_size[1], ";" , '/n'
+        
+        string = "\n" + "\n"  + "=========New State=========" + "\n" + \
+                "- - - - - - -Global Parameters - - - - - - -" + "\n" \
+                "goal location: " + str(self.goal_loc) + ";"+ "\n" + \
+                "goal direction: " + str(self.goal_orient) + ";" + "\n" + \
+                "board width: " + str(self.board_size[0]) + ";" + "\n" + \
+                "board height: " + str(self.board_size[1]) + ";" + "\n" + \
+                "- - - - - - - - - - - - - - - - - - - - - - -" + "\n" + \
+                "Car Id" + "\t" + "X" + "\t" + "Y" + "\t" + "length" + "\t" + "Horz?" + "\t" + "Is_goal?" + "\n"
         for car in self.vehicles:
-            string += car.iden, ";", car.x, ";", car.y, ";", car.length, ";", car.is_horizontal, ";", car.is_goal, ";"
+            string += str(car.iden) + "\t" + str(car.x) + "\t" +  str(car.y) + "\t" + str(car.length) + "\t" + str(car.is_horizontal) + "\t" + str(car.is_goal) + "\t" + "\n"
         return string
 
     def print_state(self):
